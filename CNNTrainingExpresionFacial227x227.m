@@ -1,8 +1,5 @@
-%clear all; close all;
-
 %% Training para AlexNet, squeezenet
 function CNNTrainingExpresionFacial227x227(method, miniBatchSize, maxEpochs, initialTraining)
-% https://es.mathworks.com/help/deeplearning/ug/train-deep-learning-network-to-classify-new-images.html
 
 imds = imageDatastore('DATASET227x227',...
     'IncludeSubfolders',true,...
@@ -20,8 +17,7 @@ for i = 1:16
 end
 
 %% Redes con dimensiones de imagen 227x227x3: AlexNet, squeezenet
-%red ='alexnet';
-%red ='squeezenet';
+
 
 switch method
     case 'AlexNet'
@@ -99,9 +95,7 @@ for i = 1:16
     imshow(I)
 end
 
-%miniBatchSize = 10;
 valFrequency = floor(numel(augimdsTrain.Files)/miniBatchSize);
-%valFrequency = floor(numel(imdsTrain.Files)/miniBatchSize);
 options = trainingOptions('sgdm', ...
     'MiniBatchSize',miniBatchSize, ...
     'MaxEpochs',maxEpochs, ...
@@ -114,7 +108,6 @@ options = trainingOptions('sgdm', ...
     'Plots','training-progress');
 
 netTransfer = trainNetwork(augimdsTrain,lgraph,options);
-%netTransfer = trainNetwork(imdsTrain,lgraph,options);
 
 %% Guardar la red entrenada con el nombre del fichero apropiado
 S1 = 'netTransferImage';
@@ -123,7 +116,7 @@ fichero = [S1,S2];
 fichero = convertCharsToStrings(fichero);
 save (fichero, "netTransfer");
 
-%% Validación del proceso de entrenamiento
+%% ValidaciÃ³n del proceso de entrenamiento
 
 [YValidationPred,probs] = classify(netTransfer,imdsValidation);
 validationAccuracy = mean(YValidationPred == imdsValidation.Labels)
@@ -142,7 +135,6 @@ cm = confusionchart(YValidationPred,imdsValidation.Labels, ...
 A1 = 'Matriz Confusion Validacion: ';
 A2 = method;
 cm.Title = [A1,A2];
-%sortClasses(cm)
 
 
 idx = randperm(numel(imdsValidation.Files),8);
@@ -155,7 +147,7 @@ for i = 1:8
     title(string(label) + ", " + num2str(100*max(probs(idx(i),:)),3) + "%");
 end
 
-%% Visualización de los pesos
+%% VisualizaciÃ³n de los pesos
 
 % Get the network weights for the second convolutional layer
 w1 = netTransfer.Layers(2).Weights;
